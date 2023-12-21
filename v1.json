@@ -1,0 +1,1376 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "CEM REST API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/allinfo/{deviceId}": {
+      "get": {
+        "description": "\nReturns general device information including device online status and parameters like serial number,\nmanufacturer, hostname, MAC, IP and WiFi signal strength.\n\nAs because of TR-069 security considerations actual password cannot be sent, returned\npassword value is always \"******\".\n\n",
+        "operationId": "allinfo",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device identity",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceIdDTO"
+            }
+          },
+          {
+            "name": "waitTimeSeconds",
+            "in": "query",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          },
+          {
+            "name": "exactId",
+            "in": "query",
+            "description": "\nParameter indicating whether provided id is used as an exact device identifier even when there are devices with the same serial number in the system.\n",
+            "explode": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true,
+              "default": null
+            }
+          },
+          {
+            "name": "deduplicationQuery",
+            "in": "query",
+            "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "csv",
+              "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "entity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reboot/{deviceId}": {
+      "post": {
+        "description": "Performs reboot on device\n",
+        "operationId": "reboot",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device identity",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceIdDTO"
+            }
+          },
+          {
+            "name": "waitTimeSeconds",
+            "in": "query",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          },
+          {
+            "name": "exactId",
+            "in": "query",
+            "description": "\nParameter indicating whether provided id is used as an exact device identifier even when there are devices with the same serial number in the system.\n",
+            "explode": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true,
+              "default": null
+            }
+          },
+          {
+            "name": "deduplicationQuery",
+            "in": "query",
+            "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "csv",
+              "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "entity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Successful"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wifi/{deviceId}/{interfaceSuffix}": {
+      "put": {
+        "description": "Update WiFi parameters",
+        "operationId": "wifi",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device identity",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceIdDTO"
+            }
+          },
+          {
+            "name": "interfaceSuffix",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "waitTimeSeconds",
+            "in": "query",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          },
+          {
+            "name": "exactId",
+            "in": "query",
+            "description": "\nParameter indicating whether provided id is used as an exact device identifier even when there are devices with the same serial number in the system.\n",
+            "explode": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true,
+              "default": null
+            }
+          },
+          {
+            "name": "deduplicationQuery",
+            "in": "query",
+            "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "csv",
+              "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditWiFi"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "entity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Successful"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wifiUserEquipment/{deviceId}/blacklist": {
+      "put": {
+        "tags": [
+          "WifiUserEquipment"
+        ],
+        "description": "Sets a blacklist for each WiFi access point.\nNo specific format of input MAC address required, i.e. 01:23:45:47:89:AB, 0123.4567.89ab and 0123456789AB are supported.\nThis endpoint disables WPS ensuring coherent behavior on all device vendors.\nAPI client is responsible to always pass an array of blacklisted MAC addresses, next blacklist will always override the previous one.\n",
+        "operationId": "wifiUserEquipment_blacklist",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceIdDTO"
+            }
+          },
+          {
+            "name": "waitTimeSeconds",
+            "in": "query",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          },
+          {
+            "name": "exactId",
+            "in": "query",
+            "description": "\nParameter indicating whether provided id is used as an exact device identifier even when there are devices with the same serial number in the system.\n",
+            "explode": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true,
+              "default": null
+            }
+          },
+          {
+            "name": "deduplicationQuery",
+            "in": "query",
+            "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "csv",
+              "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "entity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wifiUserEquipment/{deviceId}/whitelist": {
+      "put": {
+        "tags": [
+          "WifiUserEquipment"
+        ],
+        "description": "Sets a whitelist of MAC addresses for each WiFi access point.\nNo specific format of input MAC address required, i.e. 01:23:45:47:89:AB, 0123.4567.89ab and 0123456789AB are supported.\nThis endpoint disables WPS ensuring coherent behavior on all device vendors.\nIn order to allow new device to connect, you need to remove whitelist first and re-enable it later.\n",
+        "operationId": "wifiUserEquipment_whitelist",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceIdDTO"
+            }
+          },
+          {
+            "name": "waitTimeSeconds",
+            "in": "query",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          },
+          {
+            "name": "exactId",
+            "in": "query",
+            "description": "\nParameter indicating whether provided id is used as an exact device identifier even when there are devices with the same serial number in the system.\n",
+            "explode": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true,
+              "default": null
+            }
+          },
+          {
+            "name": "deduplicationQuery",
+            "in": "query",
+            "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "csv",
+              "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+              "default": ""
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "entity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "WifiUserEquipment"
+        ],
+        "description": "Removes configured whitelist.\nThis method does not modify WPS settings.\n",
+        "operationId": "wifiUserEquipment_deleteWhitelist",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceIdDTO"
+            }
+          },
+          {
+            "name": "waitTimeSeconds",
+            "in": "query",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          },
+          {
+            "name": "exactId",
+            "in": "query",
+            "description": "\nParameter indicating whether provided id is used as an exact device identifier even when there are devices with the same serial number in the system.\n",
+            "explode": false,
+            "schema": {
+              "type": "boolean",
+              "nullable": true,
+              "default": null
+            }
+          },
+          {
+            "name": "deduplicationQuery",
+            "in": "query",
+            "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "csv",
+              "description": "Query used only when there is more than one device with the same serial number in the system. The query is used to select one device from a pool of duplicates.\n\n\n Comma separated list of conditions. Conditions are concatenated using *AND* logical operator.\n Condition has form: *fieldName operator value*\n ## Available fields and operators:\n  - **id** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **blacklisted** (boolean): eq\n - **provisioningEnabled** (boolean): eq\n - **lastSessionTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastBootstrapTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **lastRebootTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **creationTime** (string($date-time)): in, gte, notexists, exists, lte, gt, eq, ne, nin, lt\n - **ipAddress** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **serialNumber** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **oui** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **modelName** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **hardwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **softwareVersion** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **productClass** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **manufacturer** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **description** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n - **directGroups** ([string]): contains, notcontains, containsany\n - **groups** ([string]): contains, notcontains, containsany\n - **properties.&ast;** (string): in, gte, startswith, endswith, exists, lte, matches, gt, eq, notexists, strcontains, ne, nin, lt\n\n ## Value types:\n - *string* - surround with single quotes: '. Escape single quotes in queries with another single quote: ''. E.g. 'Cite: ''cited text''.'.\n - *boolean* - true or false\n - *string($date-time)* - string in the ISO8601 format\n - *string($byte)* - base64 encoded string\n - *numeric* - for example: 0.123, 123, 12.123\n - *[Value type]* - array of value types. Array has the form of: [item1, item2, ...]\n - *object* - JSON object wrapped in backtick: \\`. Escape backtick inside JSON string with another backtick: \\`\\`. E.g. \\`{\"backtick\": \"\\`\\`\"}\\`\n\n ## Operators:\n  - **eq** - Field value is equal to condition value. Condition Value Type = Field Type\n - **ne** - Field value is different than condition value. Condition Value Type = Field Type\n - **in** - Field value is equal to one of the given values. Condition Value Type = [Field Type]\n - **nin** - Field value is different than all given values. Condition Value Type = [Field Type]\n - **exists** - Field does exists. Condition does not have value and has form *fieldName operator*\n - **notexists** - Field does not exists. Condition does not have value and has form *fieldName operator*\n - **gt** - Field value is greater than given value. Condition Value Type = Field Type\n - **gte** - Field value is greater or equal to given value. Condition Value Type = Field Type\n - **lt** - Field value is lower than given value. Condition Value Type = Field Type\n - **lte** - Field value is lower or equal to given value. Condition Value Type = Field Type\n - **contains** - Field value contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **notcontains** - Field value not contains the given value. Applicable only to collection fields. Condition Value Type = Field Item Type\n - **containsany** - Field value contains any of the given values. Applicable only to collection fields. Condition Value Type = Field Type\n - **strcontains** - Field value contains given substring. Applicable only to string fields. Condition Value Type = string\n - **matches** - Field value matches given regular expression. Applicable only to string fields. Condition Value Type = string\n - **startswith** - Field value starts with given string. Applicable only to string fields. Condition Value Type = string\n - **endswith** - Field value ends with given string. Applicable only to string fields. Condition Value Type = string\n\n ## Examples:\n - *someStringField eq 'string'*\n - *someDateCollection containsany ['2012-09-01T08:51:23.180Z', '2012-09-02T08:51:23.180Z']*\n - *someMapField.keyName eq 'value'*\n - *someBooleanField eq true*\n      ",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "entity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://161.49.56.30:8087/api/ump/cem/v1"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ConnectedDevice": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string"
+          },
+          "mac": {
+            "type": "string"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "signalStrength": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "mac",
+          "ipAddress"
+        ]
+      },
+      "ConnectedDevices": {
+        "type": "object",
+        "properties": {
+          "wifiUserEquipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WifiConnectedDevices"
+            }
+          },
+          "ethernetUserEquipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectedDevice"
+            }
+          }
+        },
+        "required": [
+          "wifiUserEquipment",
+          "ethernetUserEquipment"
+        ]
+      },
+      "DeviceDutyCycles": {
+        "type": "object",
+        "properties": {
+          "macAddress": {
+            "type": "string"
+          },
+          "dutyCycles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DutyCycle"
+            }
+          }
+        },
+        "required": [
+          "macAddress",
+          "dutyCycles"
+        ]
+      },
+      "DeviceIdDTO": {
+        "type": "string",
+        "title": "DeviceId"
+      },
+      "DeviceInfo": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/DeviceStatus"
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "connectedDevices": {
+            "$ref": "#/components/schemas/ConnectedDevices"
+          },
+          "wifiUserEquipment": {
+            "$ref": "#/components/schemas/WifiUserEquipmentStats"
+          },
+          "userEquipmentWhitelist": {
+            "$ref": "#/components/schemas/UserEquipmentWhitelist"
+          },
+          "healthChecks": {
+            "type": "array",
+            "items": {
+              "example": "string"
+            }
+          },
+          "wifiInstances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WiFiInstance"
+            }
+          },
+          "hardwarePerformanceKpi": {
+            "$ref": "#/components/schemas/HardwarePerformanceKpi"
+          }
+        },
+        "required": [
+          "status",
+          "serialNumber",
+          "wifiInstances"
+        ]
+      },
+      "DeviceStatus": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/true"
+          },
+          {
+            "$ref": "#/components/schemas/false"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "online",
+          "mapping": {
+            "true": "#/components/schemas/true",
+            "false": "#/components/schemas/false"
+          }
+        }
+      },
+      "DutyCycle": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string",
+            "nullable": true
+          },
+          "endTime": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "startTime",
+          "endTime"
+        ],
+        "example": {"startTime":"2023-09-07T17:00:00.000Z","endTime":"2023-09-14T17:00:00.000Z"}
+      },
+      "EditWiFi": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "ssid": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "autoChannelEnabled": {
+            "type": "boolean"
+          },
+          "wpsEnabled": {
+            "type": "boolean"
+          },
+          "transmitPower": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "standard": {
+            "type": "string"
+          },
+          "security": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "HardwarePerformanceKpi": {
+        "type": "object",
+        "properties": {
+          "rxPowerDbm": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rxPowerKpi": {
+            "type": "string"
+          },
+          "txPowerDbm": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "txPowerKpi": {
+            "type": "string"
+          },
+          "temperatureCelsius": {
+            "type": "number",
+            "format": "double"
+          },
+          "temperatureKpi": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rxPowerKpi",
+          "txPowerKpi",
+          "temperatureKpi"
+        ]
+      },
+      "Successful": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "UserEquipmentWhitelist": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "whitelist": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "enabled",
+          "whitelist"
+        ]
+      },
+      "WiFiInstance": {
+        "type": "object",
+        "properties": {
+          "instanceNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "ssid": {
+            "type": "string"
+          },
+          "band": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "autoChannelEnabled": {
+            "type": "boolean"
+          },
+          "wpsEnabled": {
+            "type": "boolean"
+          },
+          "transmitPower": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "standard": {
+            "type": "string"
+          },
+          "security": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "WifiConnectedDevices": {
+        "type": "object",
+        "properties": {
+          "wifiSsid": {
+            "type": "string"
+          },
+          "wifiBssid": {
+            "type": "string"
+          },
+          "connectedDevices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectedDevice"
+            }
+          }
+        },
+        "required": [
+          "wifiSsid",
+          "connectedDevices"
+        ]
+      },
+      "WifiUserEquipment": {
+        "type": "object",
+        "properties": {
+          "wifiSsid": {
+            "type": "string"
+          },
+          "wifiBssid": {
+            "type": "string"
+          },
+          "devicesDutyCycles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceDutyCycles"
+            }
+          }
+        },
+        "required": [
+          "wifiSsid",
+          "wifiBssid",
+          "devicesDutyCycles"
+        ]
+      },
+      "WifiUserEquipmentStats": {
+        "type": "object",
+        "properties": {
+          "band24Ghz": {
+            "$ref": "#/components/schemas/WifiUserEquipment"
+          },
+          "band5Ghz": {
+            "$ref": "#/components/schemas/WifiUserEquipment"
+          }
+        }
+      },
+      "false": {
+        "type": "object",
+        "properties": {
+          "online": {
+            "type": "string",
+            "enum": [
+              "false"
+            ]
+          },
+          "error": {
+            "type": "string"
+          },
+          "lastVisitTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "online",
+          "error",
+          "lastVisitTime"
+        ]
+      },
+      "true": {
+        "type": "object",
+        "properties": {
+          "online": {
+            "type": "string",
+            "enum": [
+              "true"
+            ]
+          }
+        },
+        "required": [
+          "online"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "auth": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "https://161.49.56.30:8087/api/auth/oauth_password"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "auth": []
+    }
+  ]
+}
